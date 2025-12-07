@@ -127,6 +127,46 @@
     box-shadow:0 4px 10px rgba(0,0,0,0.3);
   }
   #toTopBtn:hover{ background:#555; }
+
+/* HASHTAG HOVER REVEAL */
+.hashtag-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 40px 20px;
+}
+
+.hashtag-card {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  font-weight: 600;
+  color: #135f42;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+}
+
+.hashtag-card:hover {
+  transform: translateY(-6px);
+}
+
+/* Text Hidden */
+.hashtag-card p {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  margin-top: 10px;
+  font-weight: normal;
+  font-size: 14px;
+}
+
+/* Reveal on Hover */
+.hashtag-card:hover p {
+  opacity: 1;
+}
 </style>
 </head>
 
@@ -185,6 +225,32 @@
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowfullscreen>
     </iframe>
+  </div>
+</section>
+
+<section class="hashtag-section" style="background:#e7f5ef; padding:60px 20px;">
+  <h2 style="text-align:center; color:#135f42; margin-bottom:25px;">Hashtag Greesel 💚</h2>
+
+  <div class="hashtag-grid">
+    <div class="hashtag-card">#GreeSelasa
+      <p>Selasa itu hari khusus menyayangi Greesel. Setujukan? 👀</p>
+    </div>
+
+    <div class="hashtag-card">#SahurOnDegrees
+      <p>Sahur bareng Greesel: bonus semangat +15 derajat 🔥</p>
+    </div>
+
+    <div class="hashtag-card">#NgabubuGrees
+      <p>Ngabuburit sambil lihat Greesel = sahur rasanya dekat 🍃</p>
+    </div>
+
+    <div class="hashtag-card">#BerbaGree
+      <p>Berbagi konten, vibes & senyuman tipis khas Greesel 😌</p>
+    </div>
+
+<div class="hashtag-card">#GreeThings
+  <p>Hashtag sakral buat balas PM Greesel. Hati-hati, bisa bikin baper 💌</p>
+</div>
   </div>
 </section>
 
