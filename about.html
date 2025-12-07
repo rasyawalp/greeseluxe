@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>About • Greeseluxe</title>
+
+<style>
+  :root{
+    --green: #53a995;
+    --white: #ffffff;
+    --card-bg: #ffffff;
+    --text-dark: #1f2937;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:#e7f5ef;
+    color:var(--text-dark);
+  }
+
+  /* HEADER */
+  header {
+    position:fixed;
+    top:0; left:0;
+    width:100%;
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background: rgba(0,0,0,0.14);
+    backdrop-filter: blur(6px);
+    z-index:1200;
+    transition: all .35s ease;
+    color:white;
+  }
+  header.scrolled{
+    width:88%;
+    left:50%;
+    transform:translateX(-50%);
+    margin-top:8px;
+    border-radius:40px;
+    background: rgba(0,0,0,0.32);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+    padding:10px 24px;
+  }
+  .logo{ font-weight:700; font-size:20px; color:#fff; }
+
+  /* DESKTOP NAV */
+  .desktop-nav{ display:none; gap:20px; }
+  .desktop-nav a{
+    color:#fff; text-decoration:none; font-weight:600;
+  }
+
+  /* HAMBURGER */
+  .hambtn{ width:48px; height:40px; background:transparent; border:0; cursor:pointer; padding:6px; border-radius:10px;}
+  .hamburger{ width:28px; height:20px; position:relative; display:inline-block;}
+  .hamburger span{
+    position:absolute; left:0; right:0; height:3px; background:white; border-radius:6px;
+    transition:.35s;
+  }
+  .hamburger span:nth-child(1){ top:0; }
+  .hamburger span:nth-child(2){ top:50%; transform:translateY(-50%); }
+  .hamburger span:nth-child(3){ bottom:0; }
+  .hamburger.active span:nth-child(1){ top:50%; transform:translateY(-50%) rotate(45deg);}
+  .hamburger.active span:nth-child(2){ opacity:0; transform:scaleX(.1);}
+  .hamburger.active span:nth-child(3){ bottom:50%; transform:translateY(50%) rotate(-45deg);}
+
+  /* OVERLAY MENU */
+  .overlay {
+    position:fixed; inset:0; display:flex; justify-content:center; padding:48px 20px;
+    background:rgba(0,0,0,0.45); visibility:hidden; opacity:0; z-index:1100;
+    transition:.28s;
+  }
+  .overlay.open{ visibility:visible; opacity:1; }
+  .menu-card{
+    width:min(880px,96%); background:white; border-radius:18px; padding:28px;
+    transform:translateY(20px); opacity:0; transition:.36s;
+  }
+  .overlay.open .menu-card{ transform:translateY(0); opacity:1; }
+  .menu-links{ display:flex; flex-direction:column; align-items:center; gap:18px; padding:24px 8px;}
+  .menu-links a{ font-size:20px; font-weight:700; color:var(--text-dark); text-decoration:none; }
+
+  /* SHOW DESKTOP NAV */
+  @media(min-width:900px){
+    .desktop-nav{display:flex;}
+    .hambtn{display:none;}
+  }
+
+  /* HERO ABOUT */
+  .hero-about{
+    margin-top:56px; width:100%; height:70vh; border-bottom-left-radius:40px; border-bottom-right-radius:40px; overflow:hidden;
+  }
+  .hero-about img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+  /* SCHEDULE SECTION */
+  .schedule{
+    text-align:center; padding:40px 20px;
+  }
+  .schedule h2{ font-size:26px; margin-bottom:10px; color:#1f2937; }
+  .schedule p{ font-size:16px; opacity:.9; }
+
+  /* SECTION ABOUT GREESSEL */
+  .about-sec{
+    padding:60px 20px; display:flex; align-items:center; gap:30px;
+    max-width:1100px; margin:auto; flex-wrap:wrap;
+  }
+  .about-img img{
+    width:340px; border-radius:18px; object-fit:cover; box-shadow:0 8px 22px rgba(0,0,0,0.2);
+  }
+  .about-text{ flex:1; min-width:260px; }
+  .about-text h3{ font-size:24px; margin-bottom:12px; }
+  .about-text p{ line-height:1.6; opacity:.9; }
+
+  @media(max-width:768px){
+    .about-sec{ flex-direction:column; text-align:center;}
+    .about-img img{ width:90%; max-width:360px;}
+  }
+
+  /* TO TOP BUTTON */
+  #toTopBtn {
+    position: fixed; bottom: 20px; right: 20px;
+    font-size:20px; background:#333; color:white;
+    border:none; padding:10px 15px; border-radius:50%;
+    cursor:pointer; display:none; transition:.3s;
+    box-shadow:0 4px 10px rgba(0,0,0,0.3);
+  }
+  #toTopBtn:hover{ background:#555; }
+</style>
+</head>
+
+<body>
+
+<header id="siteHeader">
+  <div class="logo">Greeseluxe</div>
+
+  <nav class="desktop-nav">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="corner.html">Corner</a>
+  </nav>
+
+  <button class="hambtn" id="hambtn"><span class="hamburger" id="hamb"><span></span><span></span><span></span></span></button>
+</header>
+
+<div class="overlay" id="overlay">
+  <div class="menu-card">
+    <nav class="menu-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="corner.html">Corner</a>
+    </nav>
+  </div>
+</div>
+
+<!-- HERO ABOUT -->
+<div class="hero-about">
+  <img src="heroabout.jpg" alt="Greesel">
+</div>
+
+<!-- SCHEDULE -->
+<section class="schedule">
+  <h2>Jadwal Video Call Greesel 💬</h2>
+  <p>📆 <b>8 Desember 2025</b></p>
+  <p>⏰ 16.30–17.30 • 18.00–19.00 • 19.30–20.30</p>
+</section>
+
+<!-- ABOUT GREESSEL -->
+<section class="about-sec">
+  <div class="about-img"><img src="section1about.jpg"></div>
+  <div class="about-text">
+    <h3>Tentang Greesel 💚</h3>
+    <p>Greesella Adhalia, atau Greesel, adalah member JKT48 generasi 11 yang berasal dari Bogor. Dari kecil dia udah sering muncul di iklan, jadi kalau tampil di panggung kelihatan santai banget kayak “kamera? ah, bestie lama.” Wajahnya adem, senyumnya manis, tapi karismanya sering muncul tiba-tiba.</p>
+    <p>Tapi jangan tertipu sama auranya yang elegan, karena Greesel punya hobi: dia suka sepak bola! Klub favoritnya FC Barcelona, dan dukungannya kadang lebih semangat dari fans yang nonton sambil makan mie rebus pedas. Gabungan vibes princess kalem + jiwa penggemar bola bikin Greesel itu unik kayak minuman estetik tapi rasanya kaget terasa sporty. 💚⚽✨</p>
+  </div>
+</section>
+
+<button id="toTopBtn">⬆</button>
+
+<script>
+  const hamb = document.getElementById('hamb');
+  const hambtn = document.getElementById('hambtn');
+  const overlay = document.getElementById('overlay');
+  const siteHeader = document.getElementById('siteHeader');
+
+  function openMenu(){ hamb.classList.add('active'); overlay.classList.add('open'); document.body.style.overflow='hidden';}
+  function closeMenu(){ hamb.classList.remove('active'); overlay.classList.remove('open'); document.body.style.overflow='';}
+
+  hambtn.addEventListener('click',()=>{ overlay.classList.contains('open')? closeMenu():openMenu();});
+  overlay.addEventListener('click',(e)=>{ if(e.target===overlay) closeMenu(); });
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeMenu(); });
+
+  window.addEventListener('scroll',()=>{ window.scrollY>40? siteHeader.classList.add('scrolled'):siteHeader.classList.remove('scrolled'); });
+
+  // Panah
+  window.addEventListener("scroll",()=>{ document.getElementById("toTopBtn").style.display = window.pageYOffset>300? "block" : "none";});
+  document.getElementById("toTopBtn").addEventListener("click",()=>{ window.scrollTo({top:0,behavior:"smooth"});});
+</script>
+
+</body>
+</html>
