@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Greeseluxe</title>
+<style>
+  :root{
+    --green: #53a995;
+    --white: #ffffff;
+    --card-bg: #ffffff;
+    --text-dark: #1f2937;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:var(--green);
+    color:var(--white);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  /* HEADER */
+  header {
+    position:fixed;
+    top:0; left:0;
+    width:100%;
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background: rgba(0,0,0,0.14);
+    backdrop-filter: blur(6px);
+    z-index:1200;
+    transition: all .35s ease;
+  }
+  header.scrolled{
+    width:88%;
+    left:50%;
+    transform:translateX(-50%);
+    margin-top:8px;
+    border-radius:40px;
+    background: rgba(0,0,0,0.32);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+    padding:10px 24px;
+  }
+  .logo{
+    font-weight:700;
+    font-size:20px;
+    letter-spacing:.2px;
+    color: #fff;
+  }
+
+  /* DESKTOP NAV (visible on desktop) */
+  .desktop-nav{
+    display:none;
+    gap:20px;
+  }
+  .desktop-nav a{
+    color: white;
+    text-decoration:none;
+    font-weight:600;
+  }
+
+  /* HAMBURGER (animated -> X) */
+  .hambtn{
+    width:48px;
+    height:40px;
+    display:inline-grid;
+    place-items:center;
+    background:transparent;
+    border:0;
+    cursor:pointer;
+    padding:6px;
+    border-radius:10px;
+  }
+  .hambtn:focus{outline:2px solid rgba(255,255,255,0.12)}
+  .hamburger{
+    width:28px;
+    height:20px;
+    position:relative;
+  }
+  .hamburger span{
+    position:absolute;
+    left:0;
+    right:0;
+    height:3px;
+    background: #fff;
+    border-radius:6px;
+    transition: transform .35s cubic-bezier(.2,.9,.2,1), opacity .2s, top .35s, bottom .35s;
+  }
+  .hamburger span:nth-child(1){ top:0; }
+  .hamburger span:nth-child(2){ top:50%; transform:translateY(-50%); }
+  .hamburger span:nth-child(3){ bottom:0; }
+
+  /* active -> X */
+  .hamburger.active span:nth-child(1){
+    top:50%; transform: translateY(-50%) rotate(45deg);
+  }
+  .hamburger.active span:nth-child(2){
+    opacity:0;
+    transform: scaleX(.1);
+  }
+  .hamburger.active span:nth-child(3){
+    bottom:50%; transform: translateY(50%) rotate(-45deg);
+  }
+
+  /* FULLSCREEN OVERLAY */
+  .overlay {
+    position:fixed;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    padding:48px 20px;
+    background: rgba(0,0,0,0.45);
+    visibility:hidden;
+    opacity:0;
+    transition: opacity .28s ease, visibility .28s;
+    z-index:1100;
+  }
+  .overlay.open {
+    visibility:visible;
+    opacity:1;
+  }
+
+  /* CENTER CARD INSIDE OVERLAY (clean version) */
+  .menu-card{
+    width: min(880px, 96%);
+    background: var(--card-bg);
+    color: var(--text-dark);
+    border-radius:18px;
+    padding:28px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+    transform: translateY(20px);
+    transition: transform .36s cubic-bezier(.2,.85,.2,1), opacity .28s;
+    opacity:0;
+  }
+  .overlay.open .menu-card{
+    transform: translateY(0);
+    opacity:1;
+  }
+
+  /* menu-top now only shows title */
+  .menu-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:8px;
+  }
+  .menu-title{
+    font-weight:700;
+    font-size:18px;
+  }
+
+  /* NEW: simplified menu links (Home/About/Corner only) */
+  .menu-links{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+    padding:24px 8px 6px;
+    margin-bottom:6px;
+  }
+  .menu-links a{
+    text-decoration:none;
+    color:var(--text-dark);
+    font-weight:700;
+    font-size:20px;
+    opacity:.98;
+    padding:12px 20px;
+  }
+
+  /* large action buttons removed — we keep a subtle bottom area for optional items if needed */
+  .menu-footer{ height:6px; }
+
+  /* HERO */
+  .hero{
+    margin-top:78px;
+    height:78vh;
+    overflow:hidden;
+    border-bottom-left-radius:44px;
+    border-bottom-right-radius:44px;
+  }
+  @media(min-width:768px){ .hero{ margin-top:46px; height:82vh; } }
+  .hero video{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+
+  /* SECTION - countdown */
+  .section{
+    padding:48px 18px;
+    text-align:center;
+  }
+  .section h2{ margin:0 0 8px; color:var(--white) }
+
+  .countdown-wrap{
+    margin-top:18px;
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+
+  .count-box{
+    background: rgba(255,255,255,0.95);
+    color: var(--text-dark);
+    min-width:100px;
+    padding:14px 12px;
+    border-radius:10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    box-shadow:0 6px 20px rgba(0,0,0,0.12);
+  }
+  .count-num{
+    font-size:24px; font-weight:800; letter-spacing:0.6px;
+  }
+  .count-label{
+    font-size:13px; margin-top:6px; opacity:0.85;
+  }
+
+  /* small screens: boxes stack */
+  @media(max-width:420px){
+    .count-box{ min-width:72px; padding:10px 8px }
+    .count-num{ font-size:20px }
+  }
+
+  /* show desktop nav, hide hamburger on wide screens */
+  @media(min-width:900px){
+    .desktop-nav { display:flex; }
+    .hambtn { display:none !important; }
+  }
+
+  /* mobile tweak: lift hero slightly (if needed) */
+  @media (max-width:768px) {
+    .hero { margin-top: 10px; } /* push video up on mobile to remove gap */
+  }
+
+/* ================= BIODATA SECTION ================= */
+
+.biodata-section {
+  padding: 60px 20px;
+  background: #e7f5ef;
+}
+
+.biodata-container {
+  max-width: 1100px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+/* FOTO */
+.bio-photo img {
+  width: 330px;
+  height: auto;
+  border-radius: 22px;
+  object-fit: cover;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+  transition: opacity 0.8s ease-in-out;
+}
+
+/* BIODATA */
+.bio-info {
+  flex: 1;
+  min-width: 260px;
+}
+
+.bio-info h2 {
+  margin-bottom: 15px;
+  font-size: 28px;
+  color: #1f2937;
+  font-weight: 700;
+}
+
+.bio-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bio-info li {
+  font-size: 17px;
+  margin: 8px 0;
+  padding: 10px 14px;
+  background: white;
+  color: #1f2937;   /* ← TAMBAHKAN INI */
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.07);
+  border-left: 4px solid #53a995;
+}
+
+/* MOBILE MODE */
+@media (max-width: 768px) {
+  .biodata-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .bio-photo img {
+    width: 85%;
+    max-width: 350px;
+  }
+
+  .bio-info ul li {
+    text-align: left;
+  }
+}
+
+#galeri-zoom {
+  position: relative;
+  width: 100%;
+  height: 700vh;
+  background: #a8d5b6;
+}
+
+.zoom-wrapper {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- FOTO STICKY ZOOM --- */
+.zoom-img {
+  position: absolute;
+  width: 260px;
+  height: auto;
+  border-radius: 16px;
+  object-fit: cover;
+
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* --- POSISI ZIGZAG KANAN KIRI --- */
+.zoom-img:nth-child(odd) {
+  left: 12%;
+}
+.zoom-img:nth-child(even) {
+  right: 12%;
+}
+
+/* --- RESPONSIF HP (foto ditengah saja) --- */
+@media (max-width: 600px) {
+  .zoom-img {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) scale(0.9);
+  }
+}
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="logo">Greeseluxe</div>
+
+  <!-- DESKTOP NAV -->
+  <nav class="desktop-nav" aria-label="Desktop navigation">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="corner.html">Corner</a>
+  </nav>
+
+  <!-- HAMBURGER (mobile only) -->
+  <button class="hambtn" id="hambtn" aria-label="Buka menu" aria-expanded="false">
+    <span class="hamburger" id="hamb">
+      <span></span><span></span><span></span>
+    </span>
+  </button>
+</header>
+
+<!-- OVERLAY FULLSCREEN MENU (clean: only title + 3 links) -->
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="menu-card" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="menu-top">
+      <!-- PIONIR text removed as requested -->
+      <div class="menu-title">Greeseluxe</div>
+      <!-- internal close X removed -->
+    </div>
+
+    <nav class="menu-links" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="corner.html">Corner</a>
+    </nav>
+
+    <div class="menu-footer"></div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <video autoplay muted loop playsinline>
+    <source src="greeseluxe.mp4" type="video/mp4">
+  </video>
+</div>
+
+<!-- SECTION: Hitung Mundur Ultah -->
+<section class="section" aria-labelledby="countdownTitle">
+  <h2 id="countdownTitle">Hitung Mundur Ultah Greesel 🎂</h2>
+  <p style="opacity:.95; margin:6px 0 0; font-size:14px">10 Januari 2026</p>
+
+  <div class="countdown-wrap" id="countdownWrap" role="status" aria-live="polite">
+    <div class="count-box" aria-hidden="true">
+      <div class="count-num" id="days">--</div>
+      <div class="count-label">Hari</div>
+    </div>
+
+    <div class="count-box" aria-hidden="true">
+      <div class="count-num" id="hours">--</div>
+      <div class="count-label">Jam</div>
+    </div>
+
+    <div class="count-box" aria-hidden="true">
+      <div class="count-num" id="minutes">--</div>
+      <div class="count-label">Menit</div>
+    </div>
+
+    <div class="count-box" aria-hidden="true">
+      <div class="count-num" id="seconds">--</div>
+      <div class="count-label">Detik</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BIODATA SECTION ================= -->
+<section class="biodata-section">
+  <div class="biodata-container">
+
+    <!-- FOTO SLIDESHOW -->
+    <div class="bio-photo">
+      <img id="slideshowPhoto" src="foto1.jpg" alt="Foto Greesel">
+    </div>
+
+    <!-- MINI BIODATA -->
+    <div class="bio-info">
+      <h2>Biodata Greesel</h2>
+      <ul>
+        <li><strong>Nama Lengkap:</strong> Greesella Sophina Adhalia</li>
+        <li><strong>Tanggal Lahir:</strong> 10 Januari 2006</li>
+        <li><strong>Generasi:</strong> 11</li>
+        <li><strong>Asal:</strong> Bogor</li>
+        <li><strong>Zodiak:</strong> Capricorn</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= GALERI SCROLL ZOOM ================= -->
+<section id="galeri-zoom">
+  <div class="zoom-wrapper">
+    <img src="galeri1.jpg" class="zoom-img">
+    <img src="galeri2.jpg" class="zoom-img">
+    <img src="galeri3.jpg" class="zoom-img">
+    <img src="galeri4.jpg" class="zoom-img">
+    <img src="galeri5.jpg" class="zoom-img">
+    <img src="galeri6.jpg" class="zoom-img">
+    <img src="galeri7.jpg" class="zoom-img">
+  </div>
+</section>
+
+<script>
+  // elements
+  const hamb = document.getElementById('hamb');
+  const hambtn = document.getElementById('hambtn');
+  const overlay = document.getElementById('overlay');
+  const siteHeader = document.getElementById('siteHeader');
+
+  // open overlay (mobile)
+  function openMenu(){
+    hamb.classList.add('active');
+    overlay.classList.add('open');
+    hambtn.setAttribute('aria-expanded','true');
+    overlay.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden'; // prevent background scroll
+  }
+  // close overlay
+  function closeMenuFn(){
+    hamb.classList.remove('active');
+    overlay.classList.remove('open');
+    hambtn.setAttribute('aria-expanded','false');
+    overlay.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+  }
+
+  // toggle by clicking hamburger
+  hambtn.addEventListener('click', () => {
+    if (overlay.classList.contains('open')) closeMenuFn();
+    else openMenu();
+  });
+
+  // close when click outside card
+  overlay.addEventListener('click', (e) => {
+    // if the click target is the overlay itself (not inside menu-card), close
+    if (e.target === overlay) closeMenuFn();
+  });
+
+  // close on ESC
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeMenuFn();
+  });
+
+  // header transform on scroll (oval)
+  window.addEventListener('scroll', () => {
+    if(window.scrollY > 40) siteHeader.classList.add('scrolled');
+    else siteHeader.classList.remove('scrolled');
+  });
+
+  // COUNTDOWN to 10 Jan 2026
+  const target = new Date("2026-01-10T00:00:00");
+  const elDays = document.getElementById('days');
+  const elHours = document.getElementById('hours');
+  const elMinutes = document.getElementById('minutes');
+  const elSeconds = document.getElementById('seconds');
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  function updateCountdown(){
+    const now = new Date();
+    let diff = target.getTime() - now.getTime();
+
+    if(diff <= 0){
+      elDays.textContent = '00';
+      elHours.textContent = '00';
+      elMinutes.textContent = '00';
+      elSeconds.textContent = '00';
+      return;
+    }
+
+    const days = Math.floor(diff / (1000*60*60*24));
+    diff -= days * (1000*60*60*24);
+    const hours = Math.floor(diff / (1000*60*60));
+    diff -= hours * (1000*60*60);
+    const minutes = Math.floor(diff / (1000*60));
+    diff -= minutes * (1000*60);
+    const seconds = Math.floor(diff / 1000);
+
+    elDays.textContent = pad(days);
+    elHours.textContent = pad(hours);
+    elMinutes.textContent = pad(minutes);
+    elSeconds.textContent = pad(seconds);
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+
+<script>
+  const slideshowPhotos = [
+    "foto1.jpg",
+    "foto2.jpg",
+    "foto3.jpg",
+    "foto4.jpg",
+    "foto5.jpg"
+  ];
+
+  let index = 0;
+  const slideshow = document.getElementById("slideshowPhoto");
+
+  setInterval(() => {
+    slideshow.style.opacity = 0;
+    setTimeout(() => {
+      index = (index + 1) % slideshowPhotos.length;
+      slideshow.src = slideshowPhotos[index];
+      slideshow.style.opacity = 1;
+    }, 400);
+  }, 3000);
+</script>
+
+<script>
+const images = document.querySelectorAll(".zoom-img");
+const total = images.length;
+
+window.addEventListener("scroll", () => {
+  const section = document.querySelector("#galeri-zoom");
+  const rect = section.getBoundingClientRect();
+  const scrollPos = (window.innerHeight - rect.top);
+
+  if (scrollPos < 0) return;
+
+  const index = Math.floor(scrollPos / (rect.height / total));
+  const progress = (scrollPos % (rect.height / total)) / (rect.height / total);
+
+  images.forEach((img, i) => {
+    img.style.opacity = (i === index) ? 1 : 0;
+
+    if (i === index) {
+      const scale = 0.9 + progress * 0.6;
+      img.style.transform = `scale(${scale})`;
+    }
+  });
+});
+</script>
+
+</body>
+</html>
