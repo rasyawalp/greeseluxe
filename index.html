@@ -316,7 +316,7 @@
 #galeri-zoom {
   position: relative;
   width: 100%;
-  height: 700vh;
+  height: 700vh; /* 7 foto */
   background: #a8d5b6;
 }
 
@@ -330,36 +330,18 @@
   align-items: center;
 }
 
-/* --- FOTO STICKY ZOOM --- */
 .zoom-img {
   position: absolute;
-  width: 260px;
+  width: 260px;      /* ukuran foto kecil */
   height: auto;
   border-radius: 16px;
   object-fit: cover;
 
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(0.9);    /* mulai sedikit kecil */
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-/* --- POSISI ZIGZAG KANAN KIRI --- */
-.zoom-img:nth-child(odd) {
-  left: 12%;
-}
-.zoom-img:nth-child(even) {
-  right: 12%;
-}
-
-/* --- RESPONSIF HP (foto ditengah saja) --- */
-@media (max-width: 600px) {
-  .zoom-img {
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) scale(0.9);
-  }
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* biar mirip SS */
 }
 </style>
 </head>
@@ -600,12 +582,11 @@ window.addEventListener("scroll", () => {
     img.style.opacity = (i === index) ? 1 : 0;
 
     if (i === index) {
-      const scale = 0.9 + progress * 0.6;
+      const scale = 0.9 + progress * 0.6; 
       img.style.transform = `scale(${scale})`;
     }
   });
 });
 </script>
-
 </body>
 </html>
