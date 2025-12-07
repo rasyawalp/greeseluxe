@@ -343,6 +343,43 @@
 
   box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* biar mirip SS */
 }
+
+/* ====== GOOGLE CALENDAR SECTION ====== */
+.calendar-section {
+  padding: 60px 20px;
+  background: #dff3ea;
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+  text-align: center;
+  color: #1f2937;
+}
+
+.calendar-section h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.calendar-frame {
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 26px rgba(0,0,0,0.18);
+}
+
+.calendar-frame iframe {
+  width: 100%;
+  height: 600px;
+  border: 0;
+}
+
+@media(max-width:600px){
+  .calendar-frame iframe {
+    height: 520px;
+  }
+}
 </style>
 </head>
 <body>
@@ -453,6 +490,21 @@
     <img src="galeri5.jpg" class="zoom-img">
     <img src="galeri6.jpg" class="zoom-img">
     <img src="galeri7.jpg" class="zoom-img">
+  </div>
+</section>
+
+<section class="calendar-section">
+  <h2>Kalender Greesel 📅</h2>
+
+  <div class="calendar-frame">
+    <iframe 
+      src="https://calendar.google.com/calendar/embed?src=rasyawalp%40gmail.com&ctz=Asia/Jakarta"
+      style="border: 0"
+      width="800"
+      height="600"
+      frameborder="0"
+      scrolling="no">
+    </iframe>
   </div>
 </section>
 
