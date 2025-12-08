@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Corner • Greeseluxe</title>
+
+<style>
+  :root{
+    --green: #53a995;
+    --white: #ffffff;
+    --card-bg: #ffffff;
+    --text-dark: #1f2937;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:#e7f5ef;
+    color:var(--text-dark);
+  }
+
+  /* HEADER */
+  header {
+    position:fixed;
+    top:0; left:0;
+    width:100%;
+    padding:16px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background: rgba(0,0,0,0.14);
+    backdrop-filter: blur(6px);
+    z-index:1200;
+    transition: all .35s ease;
+    color:white;
+  }
+  header.scrolled{
+    width:88%;
+    left:50%;
+    transform:translateX(-50%);
+    margin-top:8px;
+    border-radius:40px;
+    background: rgba(0,0,0,0.32);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+    padding:10px 24px;
+  }
+  .logo{ font-weight:700; font-size:20px; color:#fff; }
+
+  /* DESKTOP NAV */
+  .desktop-nav{ display:none; gap:20px; }
+  .desktop-nav a{
+    color:#fff; text-decoration:none; font-weight:600;
+  }
+
+  /* HAMBURGER */
+  .hambtn{ width:48px; height:40px; background:transparent; border:0; cursor:pointer; padding:6px; border-radius:10px;}
+  .hamburger{ width:28px; height:20px; position:relative; display:inline-block;}
+  .hamburger span{
+    position:absolute; left:0; right:0; height:3px; background:white; border-radius:6px;
+    transition:.35s;
+  }
+  .hamburger span:nth-child(1){ top:0; }
+  .hamburger span:nth-child(2){ top:50%; transform:translateY(-50%); }
+  .hamburger span:nth-child(3){ bottom:0; }
+  .hamburger.active span:nth-child(1){ top:50%; transform:translateY(-50%) rotate(45deg);}
+  .hamburger.active span:nth-child(2){ opacity:0; transform:scaleX(.1);}
+  .hamburger.active span:nth-child(3){ bottom:50%; transform:translateY(50%) rotate(-45deg);}
+
+  /* OVERLAY MENU */
+  .overlay {
+    position:fixed; inset:0; display:flex; justify-content:center; padding:48px 20px;
+    background:rgba(0,0,0,0.45); visibility:hidden; opacity:0; z-index:1100;
+    transition:.28s;
+  }
+  .overlay.open{ visibility:visible; opacity:1; }
+  .menu-card{
+    width:min(880px,96%); background:white; border-radius:18px; padding:28px;
+    transform:translateY(20px); opacity:0; transition:.36s;
+  }
+  .overlay.open .menu-card{ transform:translateY(0); opacity:1; }
+  .menu-links{ display:flex; flex-direction:column; align-items:center; gap:18px; padding:24px 8px;}
+  .menu-links a{ font-size:20px; font-weight:700; color:var(--text-dark); text-decoration:none; }
+
+  @media(min-width:900px){
+    .desktop-nav{display:flex;}
+    .hambtn{display:none;}
+  }
+
+  /* CARD GAME SECTION */
+  .games-sec{
+    padding:100px 20px 60px; max-width:1100px;
+    margin:auto; display:flex; justify-content:center;
+  }
+  .game-card{
+    width:300px; background:var(--card-bg); border-radius:18px; padding:16px;
+    box-shadow:0 8px 22px rgba(0,0,0,0.15); text-align:center;
+  }
+  .game-card img{
+    width:100%; border-radius:14px; margin-bottom:14px; object-fit:cover;
+  }
+  .game-card h3{ font-size:20px; margin:0 0 8px; }
+  .game-card p{ font-size:15px; opacity:.9; margin-bottom:14px; }
+  .play-btn{
+    display:inline-block; background:var(--green); color:white; text-decoration:none;
+    padding:10px 22px; border-radius:12px; font-weight:700; font-size:16px;
+    transition:.24s;
+  }
+  .play-btn:hover{ transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,0.15); }
+</style>
+</head>
+
+<body>
+
+<header id="siteHeader">
+  <div class="logo">Greeseluxe</div>
+
+  <nav class="desktop-nav">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="corner.html">Corner</a>
+  </nav>
+
+  <button class="hambtn" id="hambtn"><span class="hamburger" id="hamb"><span></span><span></span><span></span></span></button>
+</header>
+
+<div class="overlay" id="overlay">
+  <div class="menu-card">
+    <nav class="menu-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="corner.html">Corner</a>
+    </nav>
+  </div>
+</div>
+
+<!-- CARD GAME SECTION -->
+<section class="games-sec">
+  <div class="game-card">
+    <img src="gameball.jpg" alt="Greesel Ambil Bola">
+    <h3>Greesel Ambil Bola</h3>
+    <p>Kumpulkan <b>20 bola</b> untuk Greesel 🎉</p>
+    <a href="game.html" class="play-btn">Play 🎮</a>
+  </div>
+</section>
+
+  <!-- SECTION GREESEL YOUTUBE -->
+  <section class="youtube-sec" style="padding:60px 20px; max-width:1100px; margin:auto;">
+    <h2 style="text-align:center; font-size:24px; margin-bottom:24px; color:var(--text-dark);">Greesel YouTube</h2>
+    <div class="video-grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px;">
+      <div class="video-item">
+        <iframe width="100%" height="200" src="https://www.youtube.com/embed/U2Fa79dpb_E" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      <div class="video-item">
+        <iframe width="100%" height="200" src="https://www.youtube.com/embed/scPSLL7ej-0" frameborder="0" allowfullscreen></iframe>
+      </div>
+      <div class="video-item">
+        <iframe width="100%" height="200" src="https://www.youtube.com/embed/y6uoLkEFpys" frameborder="0" allowfullscreen></iframe>
+      </div>
+      <div class="video-item">
+        <iframe width="100%" height="200" src="https://www.youtube.com/embed/_Qn9B9mD2bI" frameborder="0" allowfullscreen></iframe>
+      </div>
+      <div class="video-item">
+        <iframe width="100%" height="200" src="https://www.youtube.com/embed/taE4wnmDHhU" frameborder="0" allowfullscreen></iframe>
+      </div>
+      <div class="video-item">
+        <iframe width="100%" height="200" src="https://www.youtube.com/embed/74NAjcFjV9k" frameborder="0" allowfullscreen></iframe>
+      </div>
+      <div class="video-item">
+        <iframe width="100%" height="200" src="https://www.youtube.com/embed/rkSLFSx7Wfo" frameborder="0" allowfullscreen></iframe>
+      </div>
+      <div class="video-item">
+        <iframe width="100%" height="200" src="https://www.youtube.com/embed/Rz8vzUhPO1Y" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
+  </section>
+
+<script>
+  const hamb = document.getElementById('hamb');
+  const hambtn = document.getElementById('hambtn');
+  const overlay = document.getElementById('overlay');
+  const siteHeader = document.getElementById('siteHeader');
+
+  function openMenu(){ hamb.classList.add('active'); overlay.classList.add('open'); document.body.style.overflow='hidden';}
+  function closeMenu(){ hamb.classList.remove('active'); overlay.classList.remove('open'); document.body.style.overflow='';}
+
+  hambtn.addEventListener('click',()=>{ overlay.classList.contains('open')? closeMenu():openMenu();});
+  overlay.addEventListener('click',(e)=>{ if(e.target===overlay) closeMenu(); });
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeMenu(); });
+
+  window.addEventListener('scroll',()=>{ window.scrollY>40? siteHeader.classList.add('scrolled'):siteHeader.classList.remove('scrolled'); });
+</script>
+
+</body>
+</html>
