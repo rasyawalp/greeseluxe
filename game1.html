@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foto Bareng Idol</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Comic Sans MS", Arial, sans-serif;
+      background: #b6ffb6; /* 💚 HIJAU LEMBUT */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Emoji animasi */
+    .emoji {
+      position: absolute;
+      font-size: 32px;
+      animation: float 6s infinite ease-in-out;
+      opacity: 0.8;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-25px); }
+      100% { transform: translateY(0); }
+    }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 25px;
+      padding: 15px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      width: 300px;
+      height: 400px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    video, img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 20px;
+    }
+
+    #snap-btn {
+      background: #10e051;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 30px;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 3px 7px rgba(0,0,0,0.15);
+      transition: 0.2s;
+      color: white;
+      font-weight: bold;
+    }
+
+    #snap-btn:hover {
+      transform: scale(1.08);
+      background: #22ff66;
+    }
+
+    #countdown {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 80px;
+      font-weight: bold;
+      color: #0e7a32;
+      text-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      display: none;
+    }
+
+    /* 🔥 Efek flash kamera */
+    #flash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: white;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Efek Flash -->
+  <div id="flash"></div>
+
+  <!-- Emoji random banyak + tema bola -->
+  <div class="emoji" style="top:10%; left:5%">💖</div>
+  <div class="emoji" style="top:70%; left:80%; animation-delay: 1s">⚽</div>
+  <div class="emoji" style="top:40%; left:50%; animation-delay:2s">🏆</div>
+  <div class="emoji" style="top:20%; left:75%; animation-delay:3s">✨</div>
+  <div class="emoji" style="top:85%; left:10%; animation-delay:4s">👟</div>
+  <div class="emoji" style="top:15%; left:60%; animation-delay:2.5s">🥅</div>
+  <div class="emoji" style="top:50%; left:90%; animation-delay:1.5s">🌟</div>
+  <div class="emoji" style="top:65%; left:25%; animation-delay:3.5s">🔥</div>
+  <div class="emoji" style="top:5%; left:40%; animation-delay:5s">💚</div>
+
+  <div class="container">
+    <div class="card">
+      <video id="camera" autoplay></video>
+      <div id="countdown"></div>
+    </div>
+    <div class="card">
+      <img id="idol-img" />
+    </div>
+  </div>
+
+  <button id="snap-btn">📸 Ambil Foto!</button>
+
+  <canvas id="canvas" width="600" height="400" style="display:none"></canvas>
+
+  <script>
+    // Kamera
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        document.getElementById('camera').srcObject = stream;
+      })
+      .catch(err => console.error("Kamera nggak bisa dibuka", err));
+
+    // Random foto idol
+    const idolPhotos = [
+      'idol1.jpg',
+      'idol2.jpg',
+      'idol3.jpg',
+      'idol4.jpg',
+      'idol5.jpg'
+    ];
+    const randomImg = idolPhotos[Math.floor(Math.random() * idolPhotos.length)];
+    document.getElementById('idol-img').src = randomImg;
+
+    // Tombol foto + countdown
+    const countdown = document.getElementById('countdown');
+    const canvas = document.getElementById('canvas');
+    const video = document.getElementById('camera');
+    const idolImg = document.getElementById('idol-img');
+
+    document.getElementById('snap-btn').addEventListener('click', () => {
+      let time = 3;
+      countdown.style.display = 'block';
+      countdown.textContent = time;
+
+      const interval = setInterval(() => {
+        time--;
+        if(time === 0) countdown.textContent = '📸';
+        else countdown.textContent = time;
+
+        if(time < 0){
+          clearInterval(interval);
+          countdown.style.display = 'none';
+          ambilFoto();
+        }
+      }, 800);
+    });
+
+    function ambilFoto(){
+      const flash = document.getElementById('flash');
+      flash.style.opacity = 1;  // 🔦 efek flash
+
+      const ctx = canvas.getContext('2d');
+      const camW = canvas.width / 2;
+      const camH = canvas.height;
+
+      ctx.drawImage(video, 0, 0, camW, camH);
+      ctx.drawImage(idolImg, camW, 0, camW, camH);
+
+      // Delay agar tidak gagal download
+      setTimeout(() => {
+        flash.style.opacity = 0;
+        const link = document.createElement('a');
+        link.download = 'foto-bareng.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      }, 200);
+    }
+  </script>
+</body>
+</html>
