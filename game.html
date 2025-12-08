@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Greesel Ambil Bola ⚽</title>
+<style>
+  body {
+    margin: 0;
+    background: #222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    color: white;
+    font-family: Arial, sans-serif;
+    touch-action: none; /* biar swipe HP tidak ganggu */
+  }
+  canvas {
+    background: #333;
+    display: block;
+    touch-action: none;
+  }
+  #score {
+    margin: 10px;
+    font-size: 20px;
+  }
+  .controls {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  .btn {
+    width: 70px;
+    height: 70px;
+    font-size: 24px;
+    border-radius: 50%;
+    border: none;
+    background: #666;
+    color: white;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+<button id="startBtn" style="
+  padding:15px 25px;
+  font-size:20px;
+  border:none;
+  border-radius:10px;
+  background:#4caf50;
+  color:white;
+  cursor:pointer;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  z-index:999;
+">Tap to Start 🎮</button>
+
+<div id="score">⚽ 0 / 20</div>
+<canvas id="gameCanvas" width="480" height="640"></canvas>
+
+<div class="controls">
+  <button class="btn" id="left">⬅️</button>
+  <button class="btn" id="jump">⏫</button>
+  <button class="btn" id="right">➡️</button>
+</div>
+
+<audio id="bgm" src="backsound.mp3" loop></audio>
+
+<script>
+document.getElementById("startBtn").addEventListener("click", async () => {
+  try {
+    await document.getElementById("bgm").play();
+  } catch(e) {
+    console.log("Audio gagal play:", e);
+  }
+  document.getElementById("startBtn").style.display = "none"; // sembunyikan tombol
+});
+</script>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+const SPRITE_SIZE = 128;
+
+// Load gambar
+const walkImg = new Image();
+walkImg.src = "aninjalan.png"; // 4 frame
+const jumpImg = new Image();
+jumpImg.src = "aninloncat.png"; // 1 frame
+
+// Load background
+const bgImage = new Image();
+bgImage.src = "awan.jpg";
+
+// Karakter
+let player = {
+  x: canvas.width / 2 - 64,
+  y: canvas.height - 200,
+  width: 128,
+  height: 128,
+  dy: 0,
+  jumping: false,
+  frame: 0,
+  frameTimer: 0,
+  facing: 1
+};
+
+// Platform zigzag
+let platforms = [];
+const platformWidth = 120;
+const platformHeight = 20;
+
+// Platform dasar (lantai)
+platforms.push({
+  x: 0,
+  y: canvas.height - 50,
+  width: canvas.width,
+  height: 20,
+  hasMango: false
+});
+
+// Platform zigzag rapih
+let step = 70;  // jarak vertikal antar platform
+let side = 0;   // 0 = kiri, 1 = kanan
+for (let i = 1; i < 12; i++) {
+  platforms.push({
+    x: side === 0 ? 40 : canvas.width - platformWidth - 40,
+    y: canvas.height - 150 - i * step,
+    width: platformWidth,
+    height: platformHeight,
+    hasMango: Math.random() < 0.7
+  });
+  side = 1 - side; // ganti kiri ↔ kanan
+}
+
+// Kontrol
+let keys = {};
+document.addEventListener("keydown", (e) => { keys[e.code] = true; });
+document.addEventListener("keyup", (e) => { keys[e.code] = false; });
+
+function bindTouch(id, key) {
+  const btn = document.getElementById(id);
+  btn.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    keys[key] = true;
+  });
+  btn.addEventListener("touchend", (e) => {
+    e.preventDefault();
+    keys[key] = false;
+  });
+}
+bindTouch("left", "ArrowLeft");
+bindTouch("right", "ArrowRight");
+
+document.getElementById("jump").addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  if (!player.jumping) {
+    player.dy = -12;
+    player.jumping = true;
+  }
+});
+
+let mangoScore = 0;
+let gameOver = false;
+
+// Update game
+function update() {
+  if (gameOver) return;
+
+  let moving = false;
+
+  if (keys["ArrowLeft"]) {
+    player.x -= 4;
+    player.facing = -1;
+    moving = true;
+  }
+  if (keys["ArrowRight"]) {
+    player.x += 4;
+    player.facing = 1;
+    moving = true;
+  }
+
+  if (player.x < 0) player.x = 0;
+  if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+  if (keys["Space"] && !player.jumping) {
+    player.dy = -12;
+    player.jumping = true;
+  }
+
+  // Gravitasi
+  player.dy += 0.5;
+  player.y += player.dy;
+
+  // Cek tabrakan platform (sekali loncat cuma 1 platform)
+  let landingPlatform = null;
+  platforms.forEach(p => {
+    if (
+      player.x < p.x + p.width &&
+      player.x + player.width > p.x &&
+      player.y + player.height > p.y &&
+      player.y + player.height < p.y + p.height + 20 &&
+      player.dy > 0
+    ) {
+      if (!landingPlatform || p.y < landingPlatform.y) {
+        landingPlatform = p;
+      }
+    }
+  });
+
+  if (landingPlatform) {
+    player.jumping = false;
+    player.dy = 0;
+    player.y = landingPlatform.y - player.height;
+  }
+
+  // Scroll platform
+  if (player.y < canvas.height / 2) {
+    let diff = canvas.height / 2 - player.y;
+    player.y = canvas.height / 2;
+    platforms.forEach(p => {
+      p.y += diff;
+      if (p.y > canvas.height) {
+        p.y = -20;
+        p.x = (Math.random() < 0.5 ? 40 : canvas.width - platformWidth - 40);
+        p.hasMango = Math.random() < 0.7;
+      }
+    });
+  }
+
+  // Ambil mangga
+  platforms.forEach(p => {
+    if (p.hasMango) {
+      let mangoX = p.x + p.width / 2 - 10;
+      let mangoY = p.y - 25;
+      if (
+        player.x < mangoX + 20 &&
+        player.x + player.width > mangoX &&
+        player.y < mangoY + 20 &&
+        player.y + player.height > mangoY
+      ) {
+        p.hasMango = false;
+        mangoScore++;
+document.getElementById("score").innerText = "⚽ " + mangoScore + " / 20";
+      }
+    }
+  });
+
+  // Menang
+  if (mangoScore >= 20) {
+    gameOver = true;
+alert("⚽ GOAL!! Kamu berhasil mengumpulkan 20 bola untuk Greesel! 🎉");
+    document.location.reload(); // restart game
+  }
+
+  // Game Over kalau jatuh
+  if (player.y > canvas.height) {
+    gameOver = true;
+alert("Oops! Greesel jatuh... Barcelona lagi sedih 😭");
+    document.location.reload();
+  }
+
+  // Animasi jalan
+  if (!player.jumping && moving) {
+    player.frameTimer++;
+    if (player.frameTimer > 8) {
+      player.frame = (player.frame + 1) % 4;
+      player.frameTimer = 0;
+    }
+  } else {
+    player.frame = 0;
+  }
+}
+
+// Gambar game
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // gambar background
+  ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "#6cf";
+  platforms.forEach(p => {
+    ctx.fillRect(p.x, p.y, p.width, p.height);
+    if (p.hasMango) {
+      ctx.font = "20px Arial";
+ctx.fillText("⚽", p.x + p.width / 2 - 10, p.y - 5);
+    }
+  });
+
+  ctx.save();
+  if (player.facing === -1) {
+    ctx.translate(player.x + player.width, player.y);
+    ctx.scale(-1, 1);
+    if (!player.jumping) {
+      ctx.drawImage(walkImg, player.frame * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE, 0, 0, player.width, player.height);
+    } else {
+      ctx.drawImage(jumpImg, 0, 0, SPRITE_SIZE, SPRITE_SIZE, 0, 0, player.width, player.height);
+    }
+  } else {
+    if (!player.jumping) {
+      ctx.drawImage(walkImg, player.frame * SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE, player.x, player.y, player.width, player.height);
+    } else {
+      ctx.drawImage(jumpImg, 0, 0, SPRITE_SIZE, SPRITE_SIZE, player.x, player.y, player.width, player.height);
+    }
+  }
+  ctx.restore();
+}
+
+// Loop game
+function gameLoop() {
+  update();
+  draw();
+  if (!gameOver) {
+    requestAnimationFrame(gameLoop);
+  }
+}
+
+gameLoop();
+</script>
+</body>
+</html>
